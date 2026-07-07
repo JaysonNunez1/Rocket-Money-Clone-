@@ -26,12 +26,17 @@ function Navbar() {
           <a href="#compare" className="hover:text-white">vs Rocket Money</a>
           <a href="#pricing" className="hover:text-white">Pricing</a>
         </div>
-        <Link
-          to="/app"
-          className="rounded-full bg-mint-500 px-5 py-2 text-sm font-semibold text-ink-950 transition hover:bg-mint-400"
-        >
-          Try the demo
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link to="/login" className="text-sm text-white/70 hover:text-white">
+            Log in
+          </Link>
+          <Link
+            to="/app"
+            className="rounded-full bg-mint-500 px-5 py-2 text-sm font-semibold text-ink-950 transition hover:bg-mint-400"
+          >
+            Try the demo
+          </Link>
+        </div>
       </div>
     </nav>
   );
@@ -141,9 +146,8 @@ const comparison = [
   ["Cash-flow forecast with low-balance warnings", true, false],
   ["Plain-English AI spending insights", true, false],
   ["Shared budgets for couples", true, false],
-  ["Subscription price-hike alerts", true, false],
   ["Fee on negotiated bill savings", "0%", "35–60%"],
-  ["Subscription tracking & cancellation", true, true],
+  ["Subscription tracking & price-hike alerts", true, true],
   ["Credit score monitoring", true, true],
 ];
 

@@ -66,9 +66,12 @@ export default function Dashboard() {
               Demo
             </span>
           </div>
-          <Link to="/" className="flex items-center gap-1.5 text-sm text-white/60 hover:text-white">
-            <ArrowLeft className="h-4 w-4" /> Back to site
-          </Link>
+          <div className="flex items-center gap-5 text-sm text-white/60">
+            <Link to="/accounts" className="hover:text-white">My accounts</Link>
+            <Link to="/" className="flex items-center gap-1.5 hover:text-white">
+              <ArrowLeft className="h-4 w-4" /> Back to site
+            </Link>
+          </div>
         </div>
       </nav>
 

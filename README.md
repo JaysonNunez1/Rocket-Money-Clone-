@@ -11,35 +11,42 @@ A budgeting platform built to beat Rocket Money at its own game. Website now, mo
 | Charts show *what* you spent, not *why* | Plain-English AI insights with a concrete fix attached |
 | No forward view of your money | Cash-flow forecast calendar with low-balance warnings |
 | No real couples mode | Shared budgets with per-person views |
-| Silent subscription price hikes | Price-hike radar alerts the moment a price changes |
 | Email-only support, 21% BBB resolution rate | Priority human support on Plus |
 
 ## Tech stack
 
-- React 18 + Vite 6
-- Tailwind CSS v4
-- React Router (landing page + demo dashboard)
-- Recharts (charts)
-- lucide-react (icons)
+- React 18 + Vite 6, Tailwind CSS v4, React Router, Recharts, lucide-react
+- Express API with JWT auth (bcrypt-hashed passwords)
+- Plaid for real bank connections (sandbox-ready)
 
 ## Run locally
 
 ```bash
 npm install
-npm run dev
+npm run dev:all
 ```
 
-Then open the printed localhost URL. `npm run build` produces the production bundle in `dist/`.
+This starts the website (http://localhost:5173) and the API (http://localhost:4000) together. `npm run dev` runs just the website.
+
+## Enable real bank connections (Plaid sandbox — free)
+
+1. Create a free account at https://dashboard.plaid.com
+2. Copy `.env.example` to `.env` and fill in `PLAID_CLIENT_ID` and `PLAID_SECRET` (Team Settings → Keys), keep `PLAID_ENV=sandbox`
+3. Restart with `npm run dev:all`, sign up, go to My Accounts → Connect a bank
+4. In the sandbox bank login, use username `user_good` and password `pass_good`
+
+Without Plaid keys, accounts/auth still work — only bank linking is disabled.
 
 ## Pages
 
 - `/` — marketing landing page (features, comparison vs Rocket Money, pricing)
 - `/#/app` — interactive demo dashboard with sample data (insights, cash-flow forecast, budgets, subscriptions, goals)
+- `/#/login` — sign up / log in
+- `/#/accounts` — connect banks via Plaid, view balances and last-30-day transactions
 
 ## Roadmap
 
-- Real bank connections (Plaid)
-- Auth + user accounts
+- Wire dashboard charts to real Plaid transactions
 - Savings autopilot & round-ups
 - Debt payoff planner (snowball / avalanche)
 - React Native mobile app
