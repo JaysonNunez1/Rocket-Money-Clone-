@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import {
   Coins,
   Sparkles,
@@ -13,9 +15,76 @@ import {
   Wallet,
 } from "lucide-react";
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+};
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12 } },
+};
+
+function Reveal({ children, className = "", ...rest }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-80px" }}
+      className={className}
+      {...rest}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function Counter({ value, suffix = "", duration = 1400 }) {
+  const ref = useRef(null);
+  const [display, setDisplay] = useState(0);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => entry.isIntersecting && setStarted(true),
+      { threshold: 0.5 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!started) return;
+    const start = performance.now();
+    let raf;
+    const tick = (now) => {
+      const p = Math.min(1, (now - start) / duration);
+      setDisplay(Math.round(value * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [started, value, duration]);
+
+  return (
+    <span ref={ref}>
+      {display.toLocaleString()}
+      {suffix}
+    </span>
+  );
+}
+
 function Navbar() {
   return (
-    <nav className="fixed top-0 z-50 w-full glass">
+    <motion.nav
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="fixed top-0 z-50 w-full glass"
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <a href="#" className="flex items-center gap-2 text-xl font-extrabold">
           <Coins className="h-6 w-6 text-mint-400" />
@@ -23,7 +92,7 @@ function Navbar() {
         </a>
         <div className="hidden items-center gap-8 text-sm text-white/70 md:flex">
           <a href="#features" className="hover:text-white">Features</a>
-          <a href="#compare" className="hover:text-white">vs Rocket Money</a>
+          <a href="#gaps" className="hover:text-white">Why Centavo</a>
           <a href="#pricing" className="hover:text-white">Pricing</a>
         </div>
         <div className="flex items-center gap-4">
@@ -38,53 +107,64 @@ function Navbar() {
           </Link>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
 
 function Hero() {
   return (
     <header className="relative overflow-hidden pt-36 pb-24">
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-mint-500/15 blur-3xl" />
-      <div className="mx-auto max-w-6xl px-6 text-center">
-        <p className="mx-auto mb-6 w-fit rounded-full border border-mint-500/30 bg-mint-500/10 px-4 py-1.5 text-sm text-mint-300">
+      <div className="hero-orb pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[800px] rounded-full bg-mint-500/15 blur-3xl" />
+      <motion.div
+        variants={stagger}
+        initial="hidden"
+        animate="show"
+        className="mx-auto max-w-6xl px-6 text-center"
+      >
+        <motion.p
+          variants={fadeUp}
+          className="mx-auto mb-6 w-fit rounded-full border border-mint-500/30 bg-mint-500/10 px-4 py-1.5 text-sm text-mint-300"
+        >
           Every cent, accounted for
-        </p>
-        <h1 className="mx-auto max-w-3xl text-5xl font-black leading-tight md:text-6xl">
+        </motion.p>
+        <motion.h1 variants={fadeUp} className="mx-auto max-w-3xl text-5xl font-black leading-tight md:text-6xl">
           Budgeting that tells you <span className="gradient-text">why</span>, not just what
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-white/60">
-          Other apps show you charts of money you already lost. Centavo forecasts
-          your cash flow, explains your spending in plain English, and never takes
-          a cut of your savings.
-        </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        </motion.h1>
+        <motion.p variants={fadeUp} className="mx-auto mt-6 max-w-2xl text-lg text-white/60">
+          Every budgeting app shows you charts of money you already lost. Centavo
+          forecasts your cash flow, explains your spending in plain English, and
+          never takes a cut of your savings.
+        </motion.p>
+        <motion.div variants={fadeUp} className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
             to="/app"
-            className="glow flex items-center gap-2 rounded-full bg-mint-500 px-8 py-4 text-lg font-bold text-ink-950 transition hover:bg-mint-400"
+            className="pulse-glow flex items-center gap-2 rounded-full bg-mint-500 px-8 py-4 text-lg font-bold text-ink-950 transition hover:bg-mint-400"
           >
             See the live demo <ArrowRight className="h-5 w-5" />
           </Link>
           <a
-            href="#compare"
+            href="#gaps"
             className="rounded-full border border-white/15 px-8 py-4 text-lg font-semibold text-white/80 transition hover:bg-white/5"
           >
-            Why not Rocket Money?
+            What other apps miss
           </a>
-        </div>
-        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-4">
-          {[
-            ["$0", "fee on bill savings — keep 100%"],
-            ["Unlimited", "budget categories, free forever"],
-            ["21 days", "average low-balance warning lead time"],
-          ].map(([stat, label]) => (
-            <div key={label} className="glass rounded-2xl p-5">
-              <div className="text-2xl font-extrabold text-mint-300">{stat}</div>
-              <div className="mt-1 text-sm text-white/50">{label}</div>
+        </motion.div>
+        <motion.div variants={fadeUp} className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-4">
+          <div className="glass card-lift rounded-2xl p-5">
+            <div className="text-2xl font-extrabold text-mint-300">$<Counter value={0} />
             </div>
-          ))}
-        </div>
-      </div>
+            <div className="mt-1 text-sm text-white/50">fee on bill savings — keep 100%</div>
+          </div>
+          <div className="glass card-lift rounded-2xl p-5">
+            <div className="text-2xl font-extrabold text-mint-300">Unlimited</div>
+            <div className="mt-1 text-sm text-white/50">budget categories, free forever</div>
+          </div>
+          <div className="glass card-lift rounded-2xl p-5">
+            <div className="text-2xl font-extrabold text-mint-300"><Counter value={21} /> days</div>
+            <div className="mt-1 text-sm text-white/50">average low-balance warning lead time</div>
+          </div>
+        </motion.div>
+      </motion.div>
     </header>
   );
 }
@@ -113,7 +193,7 @@ const features = [
   {
     icon: Wallet,
     title: "Keep 100% of your savings",
-    body: "Rocket Money takes 35–60% of what its negotiators save you. Centavo gives you the playbook and takes $0.",
+    body: "Bill-negotiation services take 35–60% of what they save you. Centavo gives you the playbook and takes $0.",
   },
   {
     icon: ShieldCheck,
@@ -125,62 +205,89 @@ const features = [
 function Features() {
   return (
     <section id="features" className="mx-auto max-w-6xl px-6 py-24">
-      <h2 className="text-center text-4xl font-extrabold">
-        Everything Rocket Money does. <span className="gradient-text">Plus everything it doesn't.</span>
-      </h2>
-      <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <Reveal>
+        <h2 className="text-center text-4xl font-extrabold">
+          Everything the other apps do. <span className="gradient-text">Plus everything they don't.</span>
+        </h2>
+      </Reveal>
+      <motion.div
+        variants={stagger}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-80px" }}
+        className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+      >
         {features.map(({ icon: Icon, title, body }) => (
-          <div key={title} className="glass rounded-2xl p-7 transition hover:border-mint-500/40">
+          <motion.div key={title} variants={fadeUp} className="glass card-lift rounded-2xl p-7">
             <Icon className="h-8 w-8 text-mint-400" />
             <h3 className="mt-4 text-lg font-bold">{title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-white/55">{body}</p>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }
 
-const comparison = [
-  ["Unlimited budget categories on free plan", true, false],
-  ["Cash-flow forecast with low-balance warnings", true, false],
-  ["Plain-English AI spending insights", true, false],
-  ["Shared budgets for couples", true, false],
-  ["Fee on negotiated bill savings", "0%", "35–60%"],
-  ["Subscription tracking & price-hike alerts", true, true],
-  ["Credit score monitoring", true, true],
+const gaps = [
+  {
+    problem: "Charts tell you what you spent — never why, or what to do about it",
+    answer: "Plain-English insights with one concrete fix attached to every trend",
+  },
+  {
+    problem: "Everything looks backward. No app warns you before money gets tight",
+    answer: "Day-by-day cash-flow forecast that flags low-balance days weeks ahead",
+  },
+  {
+    problem: "Free tiers cap categories or force manual entry to push you to premium",
+    answer: "Unlimited categories and automatic transaction sync, free forever",
+  },
+  {
+    problem: "Bill-negotiation services quietly take 35–60% of what they save you",
+    answer: "Proven negotiation scripts included free — you keep every dollar",
+  },
+  {
+    problem: "Couples juggle shared logins because real multi-user budgeting barely exists",
+    answer: "Shared budgets with per-person views, built in from day one",
+  },
+  {
+    problem: "Apps lock you to one platform or bury you in rigid budgeting philosophy",
+    answer: "Works everywhere the web works, and adapts to how you budget",
+  },
 ];
 
-function Compare() {
+function Gaps() {
   return (
-    <section id="compare" className="mx-auto max-w-4xl px-6 py-24">
-      <h2 className="text-center text-4xl font-extrabold">
-        Centavo <span className="text-white/40">vs</span> Rocket Money
-      </h2>
-      <div className="glass mt-12 overflow-hidden rounded-2xl">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-white/10 text-left">
-              <th className="px-6 py-4 font-semibold text-white/60">Feature</th>
-              <th className="px-6 py-4 font-bold text-mint-300">Centavo</th>
-              <th className="px-6 py-4 font-semibold text-white/60">Rocket Money</th>
-            </tr>
-          </thead>
-          <tbody>
-            {comparison.map(([label, us, them]) => (
-              <tr key={label} className="border-b border-white/5 last:border-0">
-                <td className="px-6 py-4 text-white/80">{label}</td>
-                <td className="px-6 py-4">
-                  {us === true ? <Check className="h-5 w-5 text-mint-400" /> : <span className="font-bold text-mint-300">{us}</span>}
-                </td>
-                <td className="px-6 py-4">
-                  {them === true ? <Check className="h-5 w-5 text-white/40" /> : them === false ? <X className="h-5 w-5 text-rose-400/70" /> : <span className="font-bold text-rose-300">{them}</span>}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <section id="gaps" className="mx-auto max-w-5xl px-6 py-24">
+      <Reveal>
+        <h2 className="text-center text-4xl font-extrabold">
+          Every budgeting app has the <span className="gradient-text">same blind spots</span>
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-center text-white/50">
+          We studied the market — the leaders, the veterans, the newcomers. Different
+          logos, same gaps. Centavo was designed to close them.
+        </p>
+      </Reveal>
+      <motion.div
+        variants={stagger}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-80px" }}
+        className="mt-14 grid gap-6 md:grid-cols-2"
+      >
+        {gaps.map((g) => (
+          <motion.div key={g.problem} variants={fadeUp} className="glass card-lift rounded-2xl p-6">
+            <div className="flex items-start gap-3">
+              <X className="mt-0.5 h-5 w-5 shrink-0 text-rose-400/80" />
+              <p className="text-sm leading-relaxed text-white/60">{g.problem}</p>
+            </div>
+            <div className="mt-4 flex items-start gap-3 border-t border-white/5 pt-4">
+              <Check className="mt-0.5 h-5 w-5 shrink-0 text-mint-400" />
+              <p className="text-sm font-semibold leading-relaxed">{g.answer}</p>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
     </section>
   );
 }
@@ -202,7 +309,7 @@ const plans = [
   },
   {
     name: "Plus",
-    price: "$6/mo",
+    price: "$10/mo",
     tagline: "One honest price. No % cut, ever.",
     items: [
       "Everything in Free",
@@ -220,15 +327,24 @@ const plans = [
 function Pricing() {
   return (
     <section id="pricing" className="mx-auto max-w-4xl px-6 py-24">
-      <h2 className="text-center text-4xl font-extrabold">Transparent pricing</h2>
-      <p className="mt-4 text-center text-white/50">
-        No “pay what you think is fair” games. No 35–60% cut of your savings.
-      </p>
-      <div className="mt-12 grid gap-6 md:grid-cols-2">
+      <Reveal>
+        <h2 className="text-center text-4xl font-extrabold">Transparent pricing</h2>
+        <p className="mt-4 text-center text-white/50">
+          No “pay what you think is fair” games. No hidden cut of your savings.
+        </p>
+      </Reveal>
+      <motion.div
+        variants={stagger}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-80px" }}
+        className="mt-12 grid gap-6 md:grid-cols-2"
+      >
         {plans.map((p) => (
-          <div
+          <motion.div
             key={p.name}
-            className={`rounded-2xl p-8 ${p.featured ? "glow border border-mint-500/40 bg-mint-500/5" : "glass"}`}
+            variants={fadeUp}
+            className={`card-lift rounded-2xl p-8 ${p.featured ? "glow border border-mint-500/40 bg-mint-500/5" : "glass"}`}
           >
             <div className="flex items-baseline justify-between">
               <h3 className="text-xl font-bold">{p.name}</h3>
@@ -252,9 +368,9 @@ function Pricing() {
             >
               {p.cta}
             </Link>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -262,7 +378,7 @@ function Pricing() {
 function Footer() {
   return (
     <footer className="border-t border-white/5 py-12">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-center">
+      <Reveal className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-center">
         <div className="flex items-center gap-2 text-lg font-extrabold">
           <Coins className="h-5 w-5 text-mint-400" /> Centavo
         </div>
@@ -270,9 +386,9 @@ function Footer() {
           Every cent, accounted for. Demo project — not a real financial service.
         </p>
         <div className="flex items-center gap-2 text-xs text-white/30">
-          <TrendingUp className="h-4 w-4" /> Built to out-budget Rocket Money.
+          <TrendingUp className="h-4 w-4" /> Built to out-budget them all.
         </div>
-      </div>
+      </Reveal>
     </footer>
   );
 }
@@ -283,7 +399,7 @@ export default function Landing() {
       <Navbar />
       <Hero />
       <Features />
-      <Compare />
+      <Gaps />
       <Pricing />
       <Footer />
     </main>

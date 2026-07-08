@@ -75,7 +75,7 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <div className="mx-auto max-w-6xl px-6 pt-10">
+      <div className="fade-in-page mx-auto max-w-6xl px-6 pt-10">
         <h1 className="text-3xl font-extrabold">Good morning, Jayo</h1>
         <p className="mt-1 text-white/50">
           June spending: <span className="font-bold text-mint-300">${totalSpent.toLocaleString()}</span> of ${totalBudget.toLocaleString()} budgeted — you're on track.

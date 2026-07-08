@@ -1,17 +1,17 @@
 # Centavo — Every cent, accounted for
 
-A budgeting platform built to beat Rocket Money at its own game. Website now, mobile app later.
+A budgeting platform built to close the gaps every other budgeting app leaves open. Website now, mobile app later.
 
-## Why Centavo wins vs Rocket Money
+## Why Centavo wins
 
-| Gap in Rocket Money | Centavo's answer |
+| Gap in today's budgeting apps | Centavo's answer |
 |---|---|
-| Free plan capped at 2 custom budget categories | Unlimited categories, free forever |
-| Bill negotiation takes 35–60% of your savings | Free DIY negotiation scripts — keep 100% |
+| Free tiers cap categories or force manual entry | Unlimited categories + auto-sync, free forever |
+| Bill-negotiation services take 35–60% of your savings | Free DIY negotiation scripts — keep 100% |
 | Charts show *what* you spent, not *why* | Plain-English AI insights with a concrete fix attached |
 | No forward view of your money | Cash-flow forecast calendar with low-balance warnings |
-| No real couples mode | Shared budgets with per-person views |
-| Email-only support, 21% BBB resolution rate | Priority human support on Plus |
+| No real couples mode (or Apple-only apps) | Shared budgets with per-person views, on any device |
+| Slow, email-only customer support | Priority human support on Plus |
 
 ## Tech stack
 
@@ -39,7 +39,7 @@ Without Plaid keys, accounts/auth still work — only bank linking is disabled.
 
 ## Pages
 
-- `/` — marketing landing page (features, comparison vs Rocket Money, pricing)
+- `/` — marketing landing page (features, what other apps miss, pricing)
 - `/#/app` — interactive demo dashboard with sample data (insights, cash-flow forecast, budgets, subscriptions, goals)
 - `/#/login` — sign up / log in
 - `/#/accounts` — connect banks via Plaid, view balances and last-30-day transactions
