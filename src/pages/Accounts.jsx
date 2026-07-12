@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { usePlaidLink } from "react-plaid-link";
-import { Coins, ArrowLeft, Landmark, Plus, LogOut, RefreshCw } from "lucide-react";
+import { ArrowLeft, Landmark, Plus, LogOut, RefreshCw } from "lucide-react";
 import { api, getUser, clearSession } from "../lib/api.js";
+import Logo from "../components/Logo.jsx";
+
+const money = (n) =>
+  Number(n ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
 function PlaidButton({ onLinked, setError }) {
   const [linkToken, setLinkToken] = useState(null);
@@ -80,9 +84,7 @@ export default function Accounts() {
     <main className="min-h-screen pb-16">
       <nav className="glass sticky top-0 z-50">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2 text-xl font-extrabold">
-            <Coins className="h-6 w-6 text-mint-400" /> Centavo
-          </div>
+          <Logo />
           <div className="flex items-center gap-5 text-sm text-white/60">
             <Link to="/app" className="flex items-center gap-1.5 hover:text-white">
               <ArrowLeft className="h-4 w-4" /> Dashboard
@@ -119,8 +121,8 @@ export default function Accounts() {
         )}
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {accounts.map((a, i) => (
-            <div key={i} className="glass rounded-2xl p-6">
+          {accounts.map((a) => (
+            <div key={`${a.institution}-${a.name}-${a.mask}`} className="glass rounded-2xl p-6">
               <div className="flex items-center gap-3">
                 <Landmark className="h-8 w-8 text-mint-400" />
                 <div>
@@ -130,11 +132,9 @@ export default function Accounts() {
                   </p>
                 </div>
               </div>
-              <p className="mt-4 text-2xl font-black text-mint-300">
-                ${Number(a.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-              </p>
+              <p className="mt-4 text-2xl font-black text-mint-300">${money(a.balance)}</p>
               {a.available != null && (
-                <p className="text-xs text-white/40">${Number(a.available).toLocaleString()} available</p>
+                <p className="text-xs text-white/40">${money(a.available)} available</p>
               )}
             </div>
           ))}
@@ -154,7 +154,7 @@ export default function Accounts() {
             <table className="mt-3 w-full text-sm">
               <tbody>
                 {txns.slice(0, 20).map((t, i) => (
-                  <tr key={i} className="border-t border-white/5">
+                  <tr key={`${t.date}-${t.name}-${t.amount}-${i}`} className="border-t border-white/5">
                     <td className="px-6 py-3 text-white/40">{t.date}</td>
                     <td className="px-6 py-3 font-medium">{t.name}</td>
                     <td className="px-6 py-3 text-white/40">{t.category}</td>

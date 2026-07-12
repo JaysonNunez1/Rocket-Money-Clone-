@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
-  Coins,
   Sparkles,
   CalendarRange,
   Users,
@@ -14,6 +13,7 @@ import {
   TrendingUp,
   Wallet,
 } from "lucide-react";
+import Logo from "../components/Logo.jsx";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -86,9 +86,8 @@ function Navbar() {
       className="fixed top-0 z-50 w-full glass"
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#" className="flex items-center gap-2 text-xl font-extrabold">
-          <Coins className="h-6 w-6 text-mint-400" />
-          Centavo
+        <a href="#">
+          <Logo />
         </a>
         <div className="hidden items-center gap-8 text-sm text-white/70 md:flex">
           <a href="#features" className="hover:text-white">Features</a>
@@ -151,8 +150,7 @@ function Hero() {
         </motion.div>
         <motion.div variants={fadeUp} className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-4">
           <div className="glass card-lift rounded-2xl p-5">
-            <div className="text-2xl font-extrabold text-mint-300">$<Counter value={0} />
-            </div>
+            <div className="text-2xl font-extrabold text-mint-300">$0</div>
             <div className="mt-1 text-sm text-white/50">fee on bill savings — keep 100%</div>
           </div>
           <div className="glass card-lift rounded-2xl p-5">
@@ -379,9 +377,7 @@ function Footer() {
   return (
     <footer className="border-t border-white/5 py-12">
       <Reveal className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-center">
-        <div className="flex items-center gap-2 text-lg font-extrabold">
-          <Coins className="h-5 w-5 text-mint-400" /> Centavo
-        </div>
+        <Logo className="text-lg" iconClass="h-5 w-5" />
         <p className="max-w-md text-sm text-white/40">
           Every cent, accounted for. Demo project — not a real financial service.
         </p>

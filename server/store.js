@@ -1,6 +1,7 @@
 // Simple JSON-file data store. Swap for Postgres/SQLite when you go to production.
 import fs from "fs";
 import path from "path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

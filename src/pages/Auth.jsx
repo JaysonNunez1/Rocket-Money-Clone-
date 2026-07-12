@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Coins } from "lucide-react";
 import { api, setSession } from "../lib/api.js";
+import Logo from "../components/Logo.jsx";
+import TextInput from "../components/TextInput.jsx";
 
 export default function Auth() {
   const [mode, setMode] = useState("login");
@@ -35,14 +36,15 @@ export default function Auth() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2 text-2xl font-extrabold">
-          <Coins className="h-7 w-7 text-mint-400" /> Centavo
+        <Link to="/" className="mb-8 flex justify-center">
+          <Logo className="text-2xl" iconClass="h-7 w-7" />
         </Link>
         <div className="glass rounded-2xl p-8">
           <div className="mb-6 grid grid-cols-2 rounded-full bg-white/5 p-1 text-sm font-semibold">
             {["login", "signup"].map((m) => (
               <button
                 key={m}
+                type="button"
                 onClick={() => { setMode(m); setError(""); }}
                 className={`rounded-full py-2 transition ${mode === m ? "bg-mint-500 text-ink-950" : "text-white/60"}`}
               >
@@ -52,29 +54,30 @@ export default function Auth() {
           </div>
           <form onSubmit={submit} className="space-y-4">
             {mode === "signup" && (
-              <input
+              <TextInput
                 required
                 placeholder="Your name"
+                autoComplete="name"
                 value={form.name}
                 onChange={set("name")}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-mint-500/60"
               />
             )}
-            <input
+            <TextInput
               required
               type="email"
               placeholder="Email"
+              autoComplete="email"
               value={form.email}
               onChange={set("email")}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-mint-500/60"
             />
-            <input
+            <TextInput
               required
               type="password"
               placeholder={mode === "signup" ? "Password (8+ characters)" : "Password"}
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
+              minLength={mode === "signup" ? 8 : undefined}
               value={form.password}
               onChange={set("password")}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-mint-500/60"
             />
             {error && <p className="text-sm text-rose-300">{error}</p>}
             <button

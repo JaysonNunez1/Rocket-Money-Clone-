@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import {
-  Coins,
   ArrowLeft,
   Sparkles,
   AlertTriangle,
@@ -27,6 +26,9 @@ import {
   goals,
   insights,
 } from "../data/demo.js";
+import Logo from "../components/Logo.jsx";
+import Card from "../components/Card.jsx";
+import ProgressBar from "../components/ProgressBar.jsx";
 
 const tooltipStyle = {
   background: "#101e23",
@@ -35,21 +37,21 @@ const tooltipStyle = {
   color: "#e7f0ee",
 };
 
-function Card({ title, children, className = "" }) {
-  return (
-    <div className={`glass rounded-2xl p-6 ${className}`}>
-      <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/40">
-        {title}
-      </h3>
-      {children}
-    </div>
-  );
-}
+const axisProps = {
+  stroke: "rgba(255,255,255,0.3)",
+  fontSize: 12,
+  tickLine: false,
+};
+
+const insightIcons = {
+  alert: [AlertTriangle, "text-rose-400"],
+  warn: [BellRing, "text-gold-400"],
+  info: [Info, "text-mint-400"],
+};
 
 function InsightIcon({ tone }) {
-  if (tone === "alert") return <AlertTriangle className="h-5 w-5 shrink-0 text-rose-400" />;
-  if (tone === "warn") return <BellRing className="h-5 w-5 shrink-0 text-gold-400" />;
-  return <Info className="h-5 w-5 shrink-0 text-mint-400" />;
+  const [Icon, color] = insightIcons[tone] || insightIcons.info;
+  return <Icon className={`h-5 w-5 shrink-0 ${color}`} />;
 }
 
 export default function Dashboard() {
@@ -60,8 +62,8 @@ export default function Dashboard() {
     <main className="min-h-screen pb-16">
       <nav className="glass sticky top-0 z-50">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2 text-xl font-extrabold">
-            <Coins className="h-6 w-6 text-mint-400" /> Centavo
+          <div className="flex items-center">
+            <Logo />
             <span className="ml-2 rounded-full bg-mint-500/15 px-3 py-0.5 text-xs font-semibold text-mint-300">
               Demo
             </span>
@@ -109,8 +111,8 @@ export default function Dashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="day" stroke="rgba(255,255,255,0.3)" fontSize={12} tickLine={false} />
-                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis dataKey="day" {...axisProps} />
+                <YAxis {...axisProps} axisLine={false} />
                 <Tooltip contentStyle={tooltipStyle} />
                 <Area type="monotone" dataKey="balance" stroke="#34d399" strokeWidth={2.5} fill="url(#mint)" />
               </AreaChart>
@@ -124,8 +126,8 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={spendingByMonth}>
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="month" stroke="rgba(255,255,255,0.3)" fontSize={12} tickLine={false} />
-                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis dataKey="month" {...axisProps} />
+                <YAxis {...axisProps} axisLine={false} />
                 <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
                 <Bar dataKey="income" fill="rgba(255,255,255,0.15)" radius={[6, 6, 0, 0]} />
                 <Bar dataKey="spent" fill="#34d399" radius={[6, 6, 0, 0]} />
@@ -138,7 +140,6 @@ export default function Dashboard() {
           <Card title="Budget categories — unlimited, free">
             <div className="space-y-4">
               {categories.map((c) => {
-                const pct = Math.min(100, Math.round((c.spent / c.budget) * 100));
                 const over = c.spent > c.budget;
                 return (
                   <div key={c.name}>
@@ -148,12 +149,10 @@ export default function Dashboard() {
                         ${c.spent} / ${c.budget}
                       </span>
                     </div>
-                    <div className="mt-1.5 h-2 rounded-full bg-white/5">
-                      <div
-                        className="h-2 rounded-full"
-                        style={{ width: `${pct}%`, background: over ? "#fb7185" : c.color }}
-                      />
-                    </div>
+                    <ProgressBar
+                      pct={Math.round((c.spent / c.budget) * 100)}
+                      color={over ? "#fb7185" : c.color}
+                    />
                   </div>
                 );
               })}
@@ -197,9 +196,7 @@ export default function Dashboard() {
                       </span>
                       <span className="text-white/50">{pct}%</span>
                     </div>
-                    <div className="mt-1.5 h-2 rounded-full bg-white/5">
-                      <div className="h-2 rounded-full bg-mint-500" style={{ width: `${pct}%` }} />
-                    </div>
+                    <ProgressBar pct={pct} />
                     <p className="mt-1 text-xs text-white/40">
                       ${g.saved.toLocaleString()} of ${g.target.toLocaleString()}
                     </p>
